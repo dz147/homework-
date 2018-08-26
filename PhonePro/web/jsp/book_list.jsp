@@ -47,6 +47,7 @@
             <th>库存</th>
             <th>图片地址</th>
             <th>操作</th>
+
         </tr>
         <%-- jstl+EL<%
              List<Book> books = (List<Book>) request.getAttribute("books");
