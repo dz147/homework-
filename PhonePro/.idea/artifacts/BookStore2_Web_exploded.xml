@@ -1,0 +1,17 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="BookStore2:Web exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/BookStore2_Web_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="BookStore2/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="BookStore2" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="sitemesh-2.4.2" />
+          <element id="file-copy" path="D:/第二学期知识点以及代码/MySQL/mysql-connector-java-5.1.17-bin.jar" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
