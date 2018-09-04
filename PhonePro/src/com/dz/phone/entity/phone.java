@@ -26,6 +26,10 @@ public class phone {
         this.state = state;
         this.picture = picture;
     }
+    public phone(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
     public phone( String name, BigDecimal price, Date dateTime, int salesvolume, int inventory, int state, String picture) {
         this.name = name;
         this.price = price;

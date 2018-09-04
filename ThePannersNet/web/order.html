@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>确认订单</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/ext.css"/>
+</head>
+
+<body>
+<div class="container">
+    <div class="row box" style="margin-bottom: 2rem; margin-top: 2rem;">
+        <div class="col-md-10 column">
+            <h1 style="color: red; margin: auto;">确认订单</h1>
+        </div>
+        <div class="col-md-2 column" align="right">
+            <a href="index.html">返回首页</a>
+        </div>
+    </div>
+    <!-- 地址信息-->
+    <div class="row" style="margin-bottom: 2rem;">
+        <div class="col-md-12 column">
+            <ul class="nav navcolor nav-pills nav-stacked" id="position">
+                <li class="active" style="font-size: large;">
+                    <a href="#">配送地址</a>
+                </li>
+                <li>
+                    <input type="button" id="newaddr" class="btn btn-info btn-sm" value="使用新地址"/>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- 订单信息 -->
+    <div class="row" style="margin-bottom: 2rem;">
+        <div class="col-md-12 column">
+            <ul class="nav navcolor nav-pills nav-stacked" id="order">
+                <li class="active" style="font-size: large;">
+                    <a href="#">订单信息</a>
+                </li>
+                <li>
+                    <div class="row">
+                        <div class="col-md-1 column" align="left"></div>
+                        <div class="col-md-3 column" align="left">商品信息</div>
+                        <div class="col-md-3 column" align="left">单价</div>
+                        <div class="col-md-2 column" align="left">数量</div>
+                        <div class="col-md-3 column" align="left">金额</div>
+                    </div>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+    <!-- 结算 -->
+    <div class="row">
+        <div class="col-md-12 column" align="right" style="margin-top: 1rem;">
+            <p style="color: red; font-size: large; font-weight: bold;">实付款：¥ <span id="sum">38038.00</span></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 column" align="right">
+            <input type="button" id="suborder" class="btn btn-primary btn-lg" value="提交订单"/>
+        </div>
+    </div>
+</div>
+<!-- 模式对话框 -->
+<div id="addrModal"></div>
+</body>
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script>
+    $(function () {
+        // $("#order").append("<li><marquee>啊啊</marquee></li>")
+        orders();
+        pQuery();
+        cartSum();
+    });
+    var pQuery = function () {
+        $.ajax({
+            type: "post",//请求的类型
+            url: "/orders?action=posiQuery"//请求路径带参数
+        }).done(function (da) {
+            console.log(da);
+            var html="checked";
+            $.each(da, function (index, da) {
+                if(index!=0)
+                    html="";
+                var li = " <li>\n" +
+                    "                    <input type=\"radio\" "+html+" name=\"address\" value='" + da.psid + "'/>&nbsp; " + da.posis + "(" + da.pname + " 收) " + da.phone + "\n" +
+                    "                </li>";
+                $("#position").append(li);
+            });
+        }).fail(function (xhr, textStatus, errorThrown) {
+            alert("原生ajax：" + xhr + textStatus + "详细错误：" + errorThrown);
+        }).always(function () {
+            console.log("完成任务流程结束");
+        });
+    };
+    var cartSum=function () {
+        $.ajax({
+            type: "post",//请求的类型
+            url: "/orders?action=cartSum"//请求路径带参数
+        }).done(function (da) {
+            $("#sum").text(da.sum);
+        });
+    }
+
+    var orders = function () {
+        $.ajax({
+            type: "post",//请求的类型
+            url: "/orders?action=orders"//请求路径带参数
+        }).done(function (da) {
+                $.each(da, function (index, da) {
+                    var li = "<li>\n" +
+                        "                    <div class=\"row box\">\n" +
+                        "                        <div class=\"col-md-1 column\" align=\"left\">\n" +
+                        "                            <img alt=\"60x60\" style=\"margin: 1rem;\" width=\"60rem\" height=\"60rem\"\n" +
+                        "                                 src=\"img/" + da.prcture + ".jpg\"/>\n" +
+                        "                        </div>\n" +
+                        "                        <div class=\"col-md-3 column\" align=\"left\">\n" +
+                        "                            <p>\n" +
+                        "                                    " + da.pname + "" +
+                        "                            </p>\n" +
+                        "                        </div>\n" +
+                        "                        <div class=\"col-md-3 column\" align=\"left\">\n" +
+                        "                            <p style=\"font-size: large;\">￥ <span>" + da.price + "</span></p>\n" +
+                        "                        </div>\n" +
+                        "                        <div class=\"col-md-2 column\" align=\"left\">\n" +
+                        "                            <p style=\"font-size: large;\">" + da.number + "</p>\n" +
+                        "                        </div>\n" +
+                        "                        <div class=\"col-md-3 column\" align=\"left\">\n" +
+                        "                            <p style=\"color: red; font-size: large;\">¥ <span>" + da.prices + "</span></p>\n" +
+                        "                        </div>\n" +
+                        "                    </div>\n" +
+                        "                </li>";
+                    $("#order").append(li);
+                });
+            }).fail(function (xhr, textStatus, errorThrown) {
+            alert("原生ajax：" + xhr + textStatus + "详细错误：" + errorThrown);
+        }).always(function () {
+            console.log("完成任务流程结束");
+        });
+    };
+    $(function () {
+        $("#newaddr").on("click", function () {
+            $("#addrModal").load("newaddr.html", function () {
+                $("#newAddrModal").modal('show');
+            });
+        });
+        $("#suborder").on("click", function () {
+            $("#addrModal").load("newQrCode.html", function () {
+                $("#newAddrModal").modal('show');
+                $("#paid").click(function () {
+                    var d = $("#position input[type=radio]:checked");
+                   if(d.val()!=""&&d.val()>0){
+                        $.ajax({
+                            type: "post",//请求的类型
+                            url: "/orders?action=updateCart",//请求路径带参数
+                            data:{pid:d.val()}
+                        }).done(function (da) {
+                            if(da.bool=="true"){
+                                alert("钱就收到了，货就等几个月，欢迎客官下次再来哦...");
+                                window.location.href="index.html";
+                            }else{
+                                alert("没给钱呢"+da.bool);
+                            }
+                        }).fail(function (xhr, textStatus, errorThrown) {
+                            alert("原生ajax：" + xhr + textStatus + "详细错误：" + errorThrown);
+                        }).always(function () {
+                            console.log("完成任务流程结束");
+                        });
+                    }else{
+                        alert("请选择地址");
+                    }
+                });
+            });
+        });
+        /*$("#suborder").on("click", function () {
+
+            //alert("在数据生成订单记录，并更新相应的购物项关联此订单\n，并修改购物项记录的状态为已下单");
+        });*/
+    });
+</script>
+</html>

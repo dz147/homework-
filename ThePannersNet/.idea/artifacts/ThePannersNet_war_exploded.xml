@@ -1,0 +1,19 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="ThePannersNet:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/ThePannersNet_war_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="ThePannersNet/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="ThePannersNet" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="file-copy" path="D:/第二学期知识点以及代码/MySQL/mysql-connector-java-5.1.17-bin.jar" />
+          <element id="file-copy" path="E:/JAVA学习工具/apache-tomcat-8.0.44/lib/jackson-annotations-2.5.0.jar" />
+          <element id="file-copy" path="E:/JAVA学习工具/apache-tomcat-8.0.44/lib/jackson-core-2.5.0.jar" />
+          <element id="file-copy" path="E:/JAVA学习工具/apache-tomcat-8.0.44/lib/jackson-databind-2.5.0.jar" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

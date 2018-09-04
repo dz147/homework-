@@ -10,6 +10,7 @@
         <element id="directory" name="lib">
           <element id="library" level="project" name="sitemesh-2.4.2" />
           <element id="file-copy" path="D:/第二学期知识点以及代码/MySQL/mysql-connector-java-5.1.17-bin.jar" />
+          <element id="file-copy" path="$PROJECT_DIR$/../../工具包/sqlite-jdbc-3.21.0.jar" />
         </element>
       </element>
     </root>

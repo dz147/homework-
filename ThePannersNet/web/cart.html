@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>购物车</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/ext.css"/>
+</head>
+<body>
+<div class="container">
+    <div class="row box" style="margin-bottom: 2rem; margin-top: 2rem;">
+        <div class="col-md-10 column">
+            <h1 style="color: red; margin: auto;">我的购物车</h1>
+        </div>
+        <div class="col-md-2 column " align="right">
+            <a href="index.html">返回首页</a>
+        </div>
+    </div>
+    <div class="row well well-sm">
+        <div class="col-md-2 column" align="left">
+            <input type="checkbox"/>&nbsp;全选
+        </div>
+        <div class="col-md-3 column" align="left">商品信息</div>
+        <div class="col-md-2 column" align="left">单价</div>
+        <div class="col-md-2 column" align="left">数量</div>
+        <div class="col-md-2 column" align="left">金额</div>
+        <div class="col-md-1 column" align="left">操作</div>
+    </div>
+    <!-- 购物车列表 -->
+
+    <div id="content">
+
+    </div>
+    <!-- 结算 -->
+    <div class="row well well-sm">
+        <div class="col-md-12 column" align="right" style="margin-top: 1rem;">
+            <p style="color: red; font-size: large; font-weight: bold;">合计：¥ <span id="clearing">0.00</span></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 column" align="right">
+            <input type="button" class="btn btn-primary btn-lg" id="consoleCart" value="结算"/>
+            <!--onclick="location.href='order.html'"-->
+        </div>
+    </div>
+</div>
+</body>
+<script src="js/operation.js"></script>
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script>
+    var cartList = function () {
+        $.ajax({
+            type: "post",//请求的类型
+            url: "/carts?action=getCarts"//请求路径带参数
+        }).done(function (da) {
+            if (da!= null) {
+                $.each(da, function (index, da) {
+                    var div = "<div class=\"row well well-sm box\">\n" +
+                        "        <div class=\"col-md-2 column cici\" align=\"left\">\n" +
+                        "            <input type=\"checkbox\"  value='" + da.cid + "' onclick='getPrice()'/>\n" +
+                        "            <img alt=\"120x120\" width=\"120rem\" height=\"120rem\"\n" +
+                        "                 src=\"img/" + da.prcture + ".jpg\"/>\n" +
+                        "        </div>\n" +
+                        "        <div class=\"col-md-3 column\" align=\"left\">\n" +
+                        "            <p>\n" +
+                        "                " + da.pname + "" +
+                        "            </p>\n" +
+                        "        </div>\n" +
+                        "        <div class=\"col-md-2 column\"  align=\"left\">\n" +
+                        "            <p style=\"font-size: large;\" >¥ <span>" + da.price + "</span></p>\n" +
+                        "        </div>\n" +
+                        "        <div class=\"col-md-2 column\" align=\"left\">\n" +
+                        "            <input type=\"number\" name=\"buyNum\" id='num' data-id='" + da.cid + "' value=\"" + da.number + "\"/>\n" +
+                        "        </div>\n" +
+                        "        <div class=\"col-md-2 column\" align=\"left\">\n" +
+                        "            <p style=\"color: red; font-size: large;\">¥ <span>" + da.prices + "</span></p>\n" +
+                        "        </div>\n" +
+                        "        <div class=\"col-md-1 column\" align=\"left\">\n" +
+                        "            <input type=\"button\" class=\"btn btn-danger\" name=\"del\" value=\"删除\"/>\n" +
+                        "        </div>\n" +
+                        "    </div>";
+                    $("#content").append(div);
+                });
+            }
+        }).fail(function (xhr, textStatus, errorThrown) {
+            alert("原生ajax：" + xhr + textStatus + "详细错误：" + errorThrown);
+        }).always(function () {
+            console.log("完成任务流程结束");
+        });
+    };
+
+    cartList();
+
+    $(function () {
+        input();
+        blur();
+        bntjs();
+    });
+    function getPrice() {
+        var sum=0;
+        $(".col-md-2.column.cici :first-child").each(function (index,obj) {
+            console.log(obj);
+            if($(obj).prop("checked")){
+                var price = $(obj).parent().next().next().next().next().children().children().text();
+                sum=accAdd(price,sum);
+            }
+        });
+        $("#clearing").text(sum);
+       /*
+        var accAdd2 =
+        */
+    }
+    var bntjs = function () {
+
+        $("#consoleCart").click(function () {
+            var arr = [];
+            var vals = $("#content input[type=checkbox]:checked");
+            for (var i = 0; i < vals.length; i++) {
+                arr[i] = $(vals[i]).val();
+            }
+            ;
+            if (arr != null) {
+                $.ajax({
+                    type: "post",//请求的类型
+                    url: "/carts?action=cartId",//请求路径带参数
+                    data: {arr: arr},
+                    traditional: true,
+                })
+                    .done(function (da) {
+                        if (da.msg == "true") {
+                            window.location.href = "order.html";
+                        } else {
+                            console.log(da.msg);
+                        }
+                    }).fail(function (xhr, textStatus, errorThrown) {
+                    alert("原生ajax：" + xhr + textStatus + "详细错误：" + errorThrown);
+                }).always(function () {
+                    console.log("完成任务流程结束");
+                });
+            }
+        });
+    };
+
+    var input = function () {
+        $('#content').on('input propertychange', "#num", function () {
+            //alert($(this).val());
+            var price = $(this).parent().prev().children().children().text();
+            var number = $(this).val();
+            var id = $(this).data("id");
+            var accMul2 = accMul(price, number);
+            $(this).parent().next().children().children().text(accMul2);
+            getPrice();
+            console.log(accMul2);
+        });
+    };
+    var blur = function () {
+        $('#content').on('input onblur', "#num", function () {
+            //alert($(this).val());
+            var price = $(this).parent().prev().children().children().text();
+            var number = $(this).val();
+            var id = $(this).data("id");
+            var accMul2 = accMul(price, number);
+            $(this).parent().next().children().children().text(accMul2);
+            console.log(price);
+            var prices = $(this).parent().next().children().children().text();
+            if (id != "") {
+                $.ajax({
+                    type: "post",//请求的类型
+                    url: "/carts?action=getUpdate",//请求路径带参数
+                    data: {price: prices, num: number, cid: id}
+                }).done(function (da) {
+                   // $("#clearing").text(da.sum);
+                }).fail(function (xhr, textStatus, errorThrown) {
+                    console.log("原生ajax：" + xhr + textStatus + "详细错误：" + errorThrown);
+                }).always(function () {
+                    console.log("完成任务流程结束");
+                });
+            }
+        });
+    }
+
+</script>
+</html>

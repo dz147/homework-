@@ -3,6 +3,7 @@ package com.dz.phone.web;
 import com.dz.dao.PhoneIMDAO;
 import com.dz.phone.entity.phone;
 import util.DBUtil;
+import util.DBUtil2;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.ResultSet;
 import java.util.Date;
 
 @WebServlet(value = "/phone/add")
@@ -33,7 +35,9 @@ public class PhoneAddServlet extends HttpServlet {
         if(result) {
             resp.sendRedirect("/book/index");
         }else{
-            resp.getWriter().write("<h1>操作有误哦，添加失败！</h1>");
+
+                    resp.getWriter().write("<h1>操作有误哦，添加失败！</h1>");
+
         }
     }
 }

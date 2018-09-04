@@ -1,0 +1,59 @@
+<div id="newAddrModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document" style="width: 40%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h3 class="modal-title">新建地址</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row" style="margin: 1rem;">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="receiveUser" name="receiveUser"
+                                   placeholder="收货人"/>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="receiveTell" name="receiveTell"
+                                   placeholder="联系电话"/>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="receiveAddr" name="receiveAddr"
+                                   placeholder="收获地址"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="closeThis" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" id="bnts" class="btn btn-primary">保存</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/operation.js"></script>
+<script>
+
+    $("#bnts").click(function () {
+        var name = $("#receiveUser").val();
+        var phone = $("#receiveTell").val();
+        var posi = $("#receiveAddr").val();
+        if (name != null && phone != null && posi != null) {
+            $.ajax({
+                type: "post",//请求的类型
+                url: "/position?action=padd",//请求路径带参数
+                data: {pname: name, phone: phone, position: posi}
+            }).done(function (da) {
+                console.log(da.msg);
+                $("#closeThis").trigger("click");
+                location.reload();
+            }).fail(function (xhr, textStatus, errorThrown) {
+                alert("原生ajax：" + xhr + textStatus + "详细错误：" + errorThrown);
+            }).always(function () {
+                console.log("完成任务流程结束");
+            });
+        }
+    })
+</script>

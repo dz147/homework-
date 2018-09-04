@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>淘矿网</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/ext.css"/>
+</head>
+<body>
+<div class="container">
+    <div class="row box" style="margin-top: 2rem; margin-bottom: 2rem;">
+        <div class="col-md-3 column">
+            <!-- 修改bootstrap中h1的margin-->
+            <h1 style="color: red; margin: auto;">淘矿网</h1>
+        </div>
+        <div class="col-md-6 column">
+            <form role="form" class="form-inline">
+                <div class="form-group">
+                    <input type="text" size="60" class="form-control" id="search" placeholder="搜一下"/>
+                    <input type="button" class="btn btn-primary" id="bnt" value="搜索"/>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-2 column" align="right">
+            <a id="carthref" onclick="return myCart()" href="cart.html"><span class="badge pull-right" id="myCart"
+                                                                              style="color:red">0</span>我的购物车</a>
+        </div>
+        <div class="col-md-1 column" align="right">
+            <input type="hidden" id="UserId">
+            <a href="#" id="loginhref">登录</a><br/><a href="#" id="reghref">注册</a>
+        </div>
+
+    </div>
+    <!-- 商品列表 -->
+    <div class="row">
+        <div class="col-md-2 column">
+            <ul class="nav navcolor nav-pills nav-stacked" id="TypePros">
+                <li class="active">
+                    <a href="#">分类</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-10 column">
+            <div class="row" id="productInfo">
+
+            </div>
+        </div>
+    </div>
+    <!-- 模态框 -->
+    <div id="modal"></div>
+</div>
+</body>
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/operation.js"></script>
+<script>
+    $("#demo").popover();
+    var list = function () {
+        $.ajax({
+            type: "post",//请求的类型
+            url: "/pType?action=proTypes"//请求路径带参数
+        }).done(function (da) {
+            $.each(da, function (index, da) {
+                var li = "<li class='nav'>";
+                li += "<a href='#' onclick='TypeLists(" + da.pid + ")'>" + da.pname + "</a>";
+                li += "</li>";
+                $("#TypePros").append(li);
+            });
+        }).fail(function (xhr, textStatus, errorThrown) {
+            alert("原生ajax：" + xhr + textStatus + "详细错误：" + errorThrown);
+        }).always(function () {
+            console.log("完成任务流程结束");
+        })
+    }
+    list();
+    var products = function () {
+        $.ajax({
+            type: "post",//请求的类型
+            url: "/products?action=list"//请求路径带参数
+        }).done(function (da) {
+            $.each(da, function (index, da) {
+                var prod = "<div class=\"col-md-4\">\n" +
+                    "                    <div class=\"thumbnail\">\n" +
+                    "                        <img alt=\"350x350\"\n" +
+                    "                             src=\"img/" + da.prcture + ".jpg\"/>\n" +
+                    "                        <div class=\"caption\">\n" +
+                    "                            <h3 style=\"color: red; font-weight: bold;\">￥ " + da.price + "</h3>\n" +
+                    "                            <p>\n" +
+                    "                                " + da.pname + "\n" +
+                    "                            </p>\n" +
+                    "                            <p>\n" +
+                    "                                <a class=\"btn btn-primary addcart\" onclick='addCart(this)' " +
+                    "                           data-id='" + da.pno + "' data-price='" + da.price + "' >加入购物车</a>\n" +
+                    "                            </p>\n" +
+                    "                        </div>\n" +
+                    "                    </div>\n" +
+                    "                </div>";
+                $("#productInfo").append(prod);
+            });
+        }).fail(function (xhr, textStatus, errorThrown) {
+            alert("原生ajax：" + xhr + textStatus + "详细错误：" + errorThrown);
+        }).always(function () {
+            console.log("完成任务流程结束");
+        })
+
+    };
+    products();
+
+    function TypeLists(pid) {
+        $("#productInfo").html("");
+        $.ajax({
+            type: "post",//请求的类型
+            url: "/products?action=listptid",//请求路径带参数
+            data: {ptid: pid}
+        }).done(function (da) {
+            $.each(da, function (index, da) {
+                var prod = "<div class=\"col-md-4\">\n" +
+                    "                    <div class=\"thumbnail\">\n" +
+                    "                        <img alt=\"350x350\"\n" +
+                    "                             src=\"img/" + da.prcture + ".jpg\"/>\n" +
+                    "                        <div class=\"caption\">\n" +
+                    "                            <h3 style=\"color: red; font-weight: bold;\">￥ " + da.price + "</h3>\n" +
+                    "                            <p>\n" +
+                    "                                " + da.pname + "\n" +
+                    "                            </p>\n" +
+                    "                            <p>\n" +
+                    "                                <a class=\"btn btn-primary addcart\" onclick='addCart(this)' " +
+                    "                              data-id='" + da.pno + "' data-price='" + da.price + "' >加入购物车</a>\n" +
+                    "                            </p>\n" +
+                    "                        </div>\n" +
+                    "                    </div>\n" +
+                    "                </div>";
+                $("#productInfo").append(prod);
+            });
+        }).fail(function (xhr, textStatus, errorThrown) {
+            alert("原生ajax：" + xhr + textStatus + "详细错误：" + errorThrown);
+        }).always(function () {
+            console.log("完成任务流程结束");
+        })
+    }
+
+    $("#bnt").click(function () {
+        var name = $("#search").val();
+        if (name != null) {
+            $("#productInfo").html("");
+            $.ajax({
+                type: "post",//请求的类型
+                url: "/products?action=queryPros",//请求路径带参数
+                data: {pname: name}
+            }).done(function (da) {
+                $.each(da, function (index, da) {
+                    var prod = "<div class=\"col-md-4\">\n" +
+                        "                    <div class=\"thumbnail\">\n" +
+                        "                        <img alt=\"350x350\"\n" +
+                        "                             src=\"img/" + da.prcture + ".jpg\"/>\n" +
+                        "                        <div class=\"caption\">\n" +
+                        "                            <h3 style=\"color: red; font-weight: bold;\">￥ " + da.price + "</h3>\n" +
+                        "                            <p>\n" +
+                        "                                " + da.pname + "\n" +
+                        "                            </p>\n" +
+                        "                            <p>\n" +
+                        "                                <a class=\"btn btn-primary addcart\" onclick='addCart(this)' " +
+                        "                            data-id='" + da.pno + "' data-price='" + da.price + "'   >加入购物车</a>\n" +
+                        "                            </p>\n" +
+                        "                        </div>\n" +
+                        "                    </div>\n" +
+                        "                </div>";
+                    $("#productInfo").append(prod);
+                });
+            }).fail(function (xhr, textStatus, errorThrown) {
+                alert("原生ajax：" + xhr + textStatus + "详细错误：" + errorThrown);
+            }).always(function () {
+                console.log("完成任务流程结束");
+            })
+        }
+    });
+
+    function myCart() {
+        var text = $("#loginhref").text();
+        var uid = $("#UserId").val();
+        if (text != "登录" && uid != "") {
+            return true
+        } else {
+            return false;
+        }
+    }
+
+    function addCart(e) {
+        var text = $("#loginhref").text();
+        var uid = $("#UserId").val();
+        var pid = $(e).attr("data-id");
+        var price = $(e).attr("data-price");
+        if (text == "登录" && uid == "") {
+            $("#modal").load("login.html", function () {
+                $('#loginModal').modal('show');
+            });
+        } else if (text != "登录" && uid != "" && pid != null) {
+            $.ajax({
+                type: "post",//请求的类型
+                url: "/carts?action=cartAdd",//请求路径带参数
+                data: {uid: uid, pid: pid, price: price}
+            }).done(function (da) {
+                $("#myCart").text(da.count);
+            }).fail(function (xhr, textStatus, errorThrown) {
+                alert("原生ajax：" + xhr + textStatus + "详细错误：" + errorThrown);
+            }).always(function () {
+                //console.log("完成任务流程结束");
+            })
+        }
+    }
+
+    //检查用户
+    var login = function () {
+        $.ajax({
+            type: "post",//请求的类型
+            url: "/user.do?action=checkUser"//请求路径带参数
+        }).done(function (da) {
+            if (da.uid != "") {
+                $("#UserId").val(da.uid);
+                $("#myCart").text(da.count);
+            }
+            $("#loginhref").text(da.msg);
+        }).fail(function (xhr, textStatus, errorThrown) {
+            alert("原生ajax：" + xhr + textStatus + "详细错误：" + errorThrown);
+        }).always(function () {
+            console.log("完成任务流程结束");
+        })
+    };
+    login();
+    //登录弹框
+    $(function () {
+        $("#loginhref").on("click", function () {
+            $("#modal").load("login.html", function () {
+                $('#loginModal').modal('show');
+            });
+        });
+        //注册弹框
+        $("#reghref").on("click", function () {
+            $("#modal").load("reg.html", function () {
+                $('#regModal').modal('show');
+            });
+        });
+    });
+</script>
+</html>

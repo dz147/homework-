@@ -1,5 +1,6 @@
 package com.dz.phone.web;
 
+import com.dz.dao.sqlitePhoneDAO;
 import com.dz.phone.entity.phone;
 import com.dz.dao.PhoneIMDAO;
 import util.JsonUtil;
@@ -26,8 +27,14 @@ public class BookSers extends HttpServlet {
         resp.setCharacterEncoding("utf-8");
         req.setCharacterEncoding("utf-8");
         resp.setContentType("application/json;charset=utf-8");
-        PhoneIMDAO phones = new PhoneIMDAO();
+        //Mysql
+       /* PhoneIMDAO phones = new PhoneIMDAO();
         List<phone> pInfo = phones.getPhones();
+        resp.getWriter().write(JsonUtil.toJson(pInfo));*/
+        //sqlite
+        sqlitePhoneDAO sqlite = new sqlitePhoneDAO();
+        List<phone> pInfo = sqlite.getPhones();
+        System.out.println(pInfo);
         resp.getWriter().write(JsonUtil.toJson(pInfo));
     }
 }
